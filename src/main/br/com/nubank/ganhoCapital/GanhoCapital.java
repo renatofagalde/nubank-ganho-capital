@@ -28,26 +28,21 @@ public class GanhoCapital {
     public static int quantidadeAcoesAtual;
     public static double mediaPonderadaAtual;
 
-    public static int quantidadeAcoesCompradas;
+    public static double prejuizoAcumulado;
+
+    public static double impostoAcumulado;
+
 
     //todo validar exception JsonProcessingException
     public static void main(String[] args) throws JsonProcessingException {
         Scanner scanner = new Scanner(System.in);
         //List<OperationInput> operationsInput = new ArrayList<>();
 
-//        String inputStringList = "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 100},\n" +
-//                "{\"operation\":\"sell\", \"unit-cost\":15.00, \"quantity\": 50},\n" +
-//                "{\"operation\":\"sell\", \"unit-cost\":15.00, \"quantity\": 50}]\n" +
-//                "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 10000},\n" +
-//                "{\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 5000},\n" +
-//                "{\"operation\":\"sell\", \"unit-cost\":5.00, \"quantity\": 5000}]";
-
-        String inputStringList = "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 100},\n" +
-                "{\"operation\":\"buy\", \"unit-cost\":15.00, \"quantity\": 200},\n" +
-                "{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 100},\n" +
-                "{\"operation\":\"buy\", \"unit-cost\":20.00, \"quantity\": 200},\n" +
-                "{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 200},\n" +
-                "{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 400}]";
+        String inputStringList = "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 10000},\n" +
+                "{\"operation\":\"sell\", \"unit-cost\":2.00, \"quantity\": 5000},\n" +
+                "{\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 2000},\n" +
+                "{\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 2000},\n" +
+                "{\"operation\":\"sell\", \"unit-cost\":25.00, \"quantity\": 1000}]";
 
         inputStringList = inputStringList.replaceAll(LINE_BREAK, EMPTY);
 
@@ -58,37 +53,73 @@ public class GanhoCapital {
             listOperation.stream().forEach(operationInput -> {
 
                 //todo escrever o pq não tem tratamento de erro e o pq não preciso checar o outro
-                if (operationInput.getOperation() == "sell") {
-                    System.out.println("operationInput = " + operationInput);
+                if (operationInput.getOperation().equals("sell")) {
+                    double imposto = imposto(operationInput);
+                    System.out.println("imposto = " + imposto);
+                    quantidadeAcoesAtual -= operationInput.getQuantity();
                 } else { //comprar acoes
                     mediaPonderadaAtual = mediaPonderada(operationInput);
-                    System.out.println("result = " + mediaPonderadaAtual);
+                    System.out.println("mediaPonderadaAtual = " + mediaPonderadaAtual);
+                    quantidadeAcoesAtual += operationInput.getQuantity();
                 }
-                quantidadeAcoesAtual += operationInput.getQuantity();
 
             });
             System.out.println("----------------");
         });
 
-        System.out.println("operationsMap = " + operationsMap.size());
-        System.out.println("====");
-
     }
 
     public static double mediaPonderada(OperationInput operation) {
         double qtdAcoesAtualXAvgPond = quantidadeAcoesAtual * mediaPonderadaAtual;
-        double qtdAcoesXValorCompra = operation.getUnitCost().doubleValue() * operation.getQuantity().doubleValue();
+        double qtdAcoesXValorCompra = getQtdAcoesXValor(operation);
 
         int somaQuantidadeAcoesCompradas = quantidadeAcoesAtual + operation.getQuantity();
-        return  (qtdAcoesAtualXAvgPond + qtdAcoesXValorCompra) / somaQuantidadeAcoesCompradas;
+        return (qtdAcoesAtualXAvgPond + qtdAcoesXValorCompra) / somaQuantidadeAcoesCompradas;
     }
 
-    public static double venda(OperationInput operation) {
-        double qtdAcoesAtualXAvgPond = quantidadeAcoesAtual * mediaPonderadaAtual;
+    private static double getQtdAcoesXValor(OperationInput operation) {
         double qtdAcoesXValorCompra = operation.getUnitCost().doubleValue() * operation.getQuantity().doubleValue();
+        return qtdAcoesXValorCompra;
+    }
 
-        int somaQuantidadeAcoesCompradas = quantidadeAcoesAtual + operation.getQuantity();
-        return  (qtdAcoesAtualXAvgPond + qtdAcoesXValorCompra) / somaQuantidadeAcoesCompradas;
+    public static double imposto(OperationInput operation) {
+        double qtdAcoesXValorVenda = getQtdAcoesXValor(operation);
+        double imposto = 0;
+
+        double valorPonderado = operation.getQuantity().intValue() * mediaPonderadaAtual;
+        double lucroAjuste =0;
+
+        //1 calcular lucro x prejuizo
+        double lucro = qtdAcoesXValorVenda - valorPonderado;
+        if (lucro < 0) {
+            prejuizoAcumulado += lucro;
+        }else {
+
+            lucroAjuste = lucro + prejuizoAcumulado;
+
+            //2 prejuizo anterior
+            if (prejuizoAcumulado < 0) {
+                if (lucroAjuste >= 0) {
+                    prejuizoAcumulado = 0;
+                    imposto = lucroAjuste;
+                } else {
+                    prejuizoAcumulado -= lucroAjuste;
+                    lucroAjuste = 0;
+                }
+            }
+
+        }
+
+
+
+        if (qtdAcoesXValorVenda <= 20000) {
+            return imposto;
+        }
+
+
+        //3 calculo do imposto da operacao
+        imposto = lucroAjuste * 0.2;
+        return imposto;
     }
 
     private static List<List<OperationInput>> converterToListOperation(String inputStringList) throws JsonProcessingException {
