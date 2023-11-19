@@ -1,15 +1,23 @@
 package br.com.nubank.ganhoCapital.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
+
 public class OperationInput {
+
     private String operation;
-    private BigDecimal unitCost;
+
+
+    private BigDecimal unit;
+
+
     private Integer quantity;
 
-    public OperationInput(String operation, BigDecimal unitCost, Integer quantity) {
+    public OperationInput(@JsonProperty("operation")String operation, @JsonProperty("unit-cost")BigDecimal unit,@JsonProperty("quantity") Integer quantity) {
         this.operation = operation;
-        this.unitCost = unitCost;
+        this.unit = unit;
         this.quantity = quantity;
     }
 
@@ -18,7 +26,7 @@ public class OperationInput {
     }
 
     public BigDecimal getUnitCost() {
-        return unitCost;
+        return unit;
     }
 
     public Integer getQuantity() {
@@ -29,7 +37,7 @@ public class OperationInput {
     public String toString() {
         return "OperationInput{" +
                 "operation='" + operation + '\'' +
-                ", unitCost=" + unitCost +
+                ", unitCost=" + unit +
                 ", quantity=" + quantity +
                 '}';
     }
