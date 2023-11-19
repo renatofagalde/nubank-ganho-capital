@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,50 +18,36 @@ public class GanhoCapital {
     public static final String CHANGE_TO_BRACKETS_AND_HASH = "]#[";
     public static final String EMPTY = "";
 
-    public static HashMap<Integer, List<OperationInput>> operationsMap = new HashMap<>();
-
     public static Integer count = 0;
-
-    //public static MediaPonderada mediaPonderada = new MediaPonderada(0, 0, 0);
 
     public static int quantidadeAcoesAtual;
     public static double mediaPonderadaAtual;
 
-    public static double prejuizoAcumulado;
+    public static double prejuizoPassado;
 
-    public static double impostoAcumulado;
 
 
     //todo validar exception JsonProcessingException
     public static void main(String[] args) throws JsonProcessingException {
         Scanner scanner = new Scanner(System.in);
-        //List<OperationInput> operationsInput = new ArrayList<>();
-
-        String inputStringList = "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 10000},\n" +
-                "{\"operation\":\"sell\", \"unit-cost\":2.00, \"quantity\": 5000},\n" +
-                "{\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 2000},\n" +
-                "{\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 2000},\n" +
-                "{\"operation\":\"sell\", \"unit-cost\":25.00, \"quantity\": 1000}]";
+        String inputStringList = getInputList(scanner);
 
         inputStringList = inputStringList.replaceAll(LINE_BREAK, EMPTY);
 
         inputStringList = fixMultipleRootListInString(inputStringList);
         List<List<OperationInput>> allListOperations = converterToListOperation(inputStringList);
         allListOperations.stream().forEach(listOperation -> {
-            operationsMap.put(++count, listOperation); //todo trocar para reduce
             listOperation.stream().forEach(operationInput -> {
-
+                double imposto = 0;
                 //todo escrever o pq não tem tratamento de erro e o pq não preciso checar o outro
                 if (operationInput.getOperation().equals("sell")) {
-                    double imposto = imposto(operationInput);
-                    System.out.println("imposto = " + imposto);
+                    imposto = imposto(operationInput);
                     quantidadeAcoesAtual -= operationInput.getQuantity();
                 } else { //comprar acoes
                     mediaPonderadaAtual = mediaPonderada(operationInput);
-                    System.out.println("mediaPonderadaAtual = " + mediaPonderadaAtual);
                     quantidadeAcoesAtual += operationInput.getQuantity();
                 }
-
+                System.out.println("imposto = " + imposto);
             });
             System.out.println("----------------");
         });
@@ -87,29 +72,28 @@ public class GanhoCapital {
         double imposto = 0;
 
         double valorPonderado = operation.getQuantity().intValue() * mediaPonderadaAtual;
-        double lucroAjuste =0;
+        double lucroAjuste = 0;
 
         //1 calcular lucro x prejuizo
         double lucro = qtdAcoesXValorVenda - valorPonderado;
         if (lucro < 0) {
-            prejuizoAcumulado += lucro;
-        }else {
+            prejuizoPassado += lucro;
+        } else {
 
-            lucroAjuste = lucro + prejuizoAcumulado;
+            lucroAjuste = lucro + prejuizoPassado;
 
             //2 prejuizo anterior
-            if (prejuizoAcumulado < 0) {
+            if (prejuizoPassado < 0) {
                 if (lucroAjuste >= 0) {
-                    prejuizoAcumulado = 0;
+                    prejuizoPassado = 0;
                     imposto = lucroAjuste;
                 } else {
-                    prejuizoAcumulado -= lucroAjuste;
+                    prejuizoPassado -= lucroAjuste;
                     lucroAjuste = 0;
                 }
             }
 
         }
-
 
 
         if (qtdAcoesXValorVenda <= 20000) {
