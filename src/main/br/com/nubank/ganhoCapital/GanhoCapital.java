@@ -20,8 +20,11 @@ import java.util.regex.Pattern;
 public class GanhoCapital {
 
     static final ObjectMapper objectMapper = new ObjectMapper();
-    public static final String DELIMITADOR_ARRAY_OBJETO = ",";
-    public static final String DELIMITADOR_ARRAY_LIST = "]";
+    public static final String LOOKING_FOR_BRACKETS = "]\\[";
+    public static final String LINE_BREAK = "\n";
+    public static final String HASH = "#";
+    public static final String CHANGE_TO_BRACKETS_AND_HASH = "]#[";
+    public static final String EMPTY = "";
 
 
     //todo validar exception JsonProcessingException
@@ -44,7 +47,7 @@ public class GanhoCapital {
                 "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 10000},\n" +
                 "{\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 5000},\n" +
                 "{\"operation\":\"sell\", \"unit-cost\":5.00, \"quantity\": 5000}]";
-        inputStringList = inputStringList.replaceAll("\n", "");
+        inputStringList = inputStringList.replaceAll(LINE_BREAK, EMPTY);
 
         inputStringList = fixMultipleRootListInString(inputStringList);
         List<List<OperationInput>> allListOperations = converterToListOperation(inputStringList);
@@ -61,10 +64,10 @@ public class GanhoCapital {
     }
 
     private static List<List<OperationInput>> converterToListOperation(String inputStringList) throws JsonProcessingException {
-        String[] jsons = inputStringList.split("#");
+        String[] jsons = inputStringList.split(HASH);
         List<List<OperationInput>> operationInputsAll = new ArrayList<>();
-        for(String s:jsons){
-            List<OperationInput> operationInputs= objectMapper.readValue(s, new TypeReference<List<OperationInput>>() {
+        for(String json:jsons){
+            List<OperationInput> operationInputs= objectMapper.readValue(json, new TypeReference<List<OperationInput>>() {
             });
 
             operationInputsAll.add(operationInputs);
@@ -73,14 +76,14 @@ public class GanhoCapital {
     }
 
     private static String fixMultipleRootListInString(String inputStringList) {
-        return inputStringList.replaceAll("]\\[", "]#[");
+        return inputStringList.replaceAll(LOOKING_FOR_BRACKETS, CHANGE_TO_BRACKETS_AND_HASH);
     }
 
     private static String getInputList(Scanner scanner) {
         StringBuffer inputLists = new StringBuffer();
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine();
-            input = input.replaceAll("\n", "");
+            input = input.replaceAll(LINE_BREAK, EMPTY);
             if (input.isEmpty()) break;
             inputLists.append(input);
         }
