@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,48 +19,83 @@ public class GanhoCapital {
     public static final String CHANGE_TO_BRACKETS_AND_HASH = "]#[";
     public static final String EMPTY = "";
 
+    public static HashMap<Integer, List<OperationInput>> operationsMap = new HashMap<>();
+
+    public static Integer count = 0;
+
+    //public static MediaPonderada mediaPonderada = new MediaPonderada(0, 0, 0);
+
+    public static int quantidadeAcoesAtual;
+    public static double mediaPonderadaAtual;
+
+    public static int quantidadeAcoesCompradas;
 
     //todo validar exception JsonProcessingException
     public static void main(String[] args) throws JsonProcessingException {
         Scanner scanner = new Scanner(System.in);
         //List<OperationInput> operationsInput = new ArrayList<>();
 
-//        String inputStringList = getInputList(scanner);
-//        String inputStringList = "[{\"operation\":\"buy\", \"unit\":10.00, \"quantity\": 100},\n" +
-//                "{\"operation\":\"sell\", \"unit\":15.00, \"quantity\": 50},\n" +
-//                "{\"operation\":\"sell\", \"unit\":15.00, \"quantity\": 50}]";
+//        String inputStringList = "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 100},\n" +
+//                "{\"operation\":\"sell\", \"unit-cost\":15.00, \"quantity\": 50},\n" +
+//                "{\"operation\":\"sell\", \"unit-cost\":15.00, \"quantity\": 50}]\n" +
+//                "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 10000},\n" +
+//                "{\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 5000},\n" +
+//                "{\"operation\":\"sell\", \"unit-cost\":5.00, \"quantity\": 5000}]";
 
-//        String inputStringList = "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 10000},\n" +
-//                "{\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 5000}]\n" +
-//                "[{\"operation\":\"buy\", \"unit-cost\":20.00, \"quantity\": 10000},\n" +
-//                "{\"operation\":\"sell\", \"unit-cost\":10.00, \"quantity\": 5000}]";
         String inputStringList = "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 100},\n" +
-                "{\"operation\":\"sell\", \"unit-cost\":15.00, \"quantity\": 50},\n" +
-                "{\"operation\":\"sell\", \"unit-cost\":15.00, \"quantity\": 50}]\n" +
-                "[{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 10000},\n" +
-                "{\"operation\":\"sell\", \"unit-cost\":20.00, \"quantity\": 5000},\n" +
-                "{\"operation\":\"sell\", \"unit-cost\":5.00, \"quantity\": 5000}]";
+                "{\"operation\":\"buy\", \"unit-cost\":15.00, \"quantity\": 200},\n" +
+                "{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 100},\n" +
+                "{\"operation\":\"buy\", \"unit-cost\":20.00, \"quantity\": 200},\n" +
+                "{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 200},\n" +
+                "{\"operation\":\"buy\", \"unit-cost\":10.00, \"quantity\": 400}]";
+
         inputStringList = inputStringList.replaceAll(LINE_BREAK, EMPTY);
 
         inputStringList = fixMultipleRootListInString(inputStringList);
         List<List<OperationInput>> allListOperations = converterToListOperation(inputStringList);
-        allListOperations.stream().forEach(listOperation->{
+        allListOperations.stream().forEach(listOperation -> {
+            operationsMap.put(++count, listOperation); //todo trocar para reduce
             listOperation.stream().forEach(operationInput -> {
-                System.out.println("operationInput.getOperation() = " + operationInput.getOperation() + "  " +operationInput.getUnitCost() + "  "+operationInput.getQuantity());
-//                System.out.println("operationInput.getUnitCost() = " + operationInput.getUnitCost());
-//                System.out.println("operationInput.getQuantity() = " + operationInput.getQuantity());
+
+                //todo escrever o pq não tem tratamento de erro e o pq não preciso checar o outro
+                if (operationInput.getOperation() == "sell") {
+                    System.out.println("operationInput = " + operationInput);
+                } else { //comprar acoes
+                    mediaPonderadaAtual = mediaPonderada(operationInput);
+                    System.out.println("result = " + mediaPonderadaAtual);
+                }
+                quantidadeAcoesAtual += operationInput.getQuantity();
+
             });
             System.out.println("----------------");
         });
-                
 
+        System.out.println("operationsMap = " + operationsMap.size());
+        System.out.println("====");
+
+    }
+
+    public static double mediaPonderada(OperationInput operation) {
+        double qtdAcoesAtualXAvgPond = quantidadeAcoesAtual * mediaPonderadaAtual;
+        double qtdAcoesXValorCompra = operation.getUnitCost().doubleValue() * operation.getQuantity().doubleValue();
+
+        int somaQuantidadeAcoesCompradas = quantidadeAcoesAtual + operation.getQuantity();
+        return  (qtdAcoesAtualXAvgPond + qtdAcoesXValorCompra) / somaQuantidadeAcoesCompradas;
+    }
+
+    public static double venda(OperationInput operation) {
+        double qtdAcoesAtualXAvgPond = quantidadeAcoesAtual * mediaPonderadaAtual;
+        double qtdAcoesXValorCompra = operation.getUnitCost().doubleValue() * operation.getQuantity().doubleValue();
+
+        int somaQuantidadeAcoesCompradas = quantidadeAcoesAtual + operation.getQuantity();
+        return  (qtdAcoesAtualXAvgPond + qtdAcoesXValorCompra) / somaQuantidadeAcoesCompradas;
     }
 
     private static List<List<OperationInput>> converterToListOperation(String inputStringList) throws JsonProcessingException {
         String[] jsons = inputStringList.split(HASH);
         List<List<OperationInput>> operationInputsAll = new ArrayList<>();
-        for(String json:jsons){
-            List<OperationInput> operationInputs= objectMapper.readValue(json, new TypeReference<List<OperationInput>>() {
+        for (String json : jsons) {
+            List<OperationInput> operationInputs = objectMapper.readValue(json, new TypeReference<List<OperationInput>>() {
             });
 
             operationInputsAll.add(operationInputs);
