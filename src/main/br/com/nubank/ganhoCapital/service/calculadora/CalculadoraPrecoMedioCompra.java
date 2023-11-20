@@ -16,7 +16,6 @@ public class CalculadoraPrecoMedioCompra extends Calculadora {
         double qtdAcoesXValorCompra = getQtdAcoesXValor(operationInput);
 
         int somaQuantidadeAcoesCompradas = lucroPrejuizo.getQuantidadeAcoesAtual() + operationInput.getQuantity();
-//        return (qtdAcoesAtualXAvgPond + qtdAcoesXValorCompra) / somaQuantidadeAcoesCompradas;
 
         double mediaPonderada = (qtdAcoesAtualXAvgPond + qtdAcoesXValorCompra) / somaQuantidadeAcoesCompradas;
         lucroPrejuizo.atualizarMediaPonderadaAtual(mediaPonderada);
