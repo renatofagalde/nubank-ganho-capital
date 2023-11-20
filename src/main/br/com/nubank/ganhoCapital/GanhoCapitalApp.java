@@ -12,7 +12,6 @@ import java.util.Scanner;
 
 public class GanhoCapitalApp {
 
-    static final ObjectMapper objectMapper = new ObjectMapper();
     public static final String LOOKING_FOR_BRACKETS = "]\\[";
     public static final String LINE_BREAK = "\n";
     public static final String HASH = "#";
@@ -24,10 +23,6 @@ public class GanhoCapitalApp {
     public static void main(String[] args) throws JsonProcessingException {
         Scanner scanner = new Scanner(System.in);
         String inputStringList = getInputList(scanner);
-
-        inputStringList = inputStringList.replaceAll(LINE_BREAK, EMPTY);
-
-
         inputStringList = fixMultipleRootListInString(inputStringList);
         List<List<OperationInput>> allListOperations = converterToListOperation(inputStringList);
 
@@ -35,6 +30,7 @@ public class GanhoCapitalApp {
     }
 
     private static List<List<OperationInput>> converterToListOperation(String inputStringList) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
         String[] jsons = inputStringList.split(HASH);
         List<List<OperationInput>> operationInputsAll = new ArrayList<>();
         for (String json : jsons) {
@@ -53,10 +49,9 @@ public class GanhoCapitalApp {
         StringBuffer inputLists = new StringBuffer();
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine();
-            input = input.replaceAll(LINE_BREAK, EMPTY);
             if (input.isEmpty()) break;
             inputLists.append(input);
         }
-        return inputLists.toString();
+        return inputLists.toString().replaceAll(LINE_BREAK, EMPTY);
     }
 }

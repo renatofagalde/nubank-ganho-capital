@@ -4,37 +4,45 @@ import br.com.nubank.ganhoCapital.service.model.MediaPonderadaLucroPrejuizo;
 import br.com.nubank.ganhoCapital.service.model.OperationInput;
 
 public class CalculadoraPrecoMedioVenda extends Calculadora {
+
+    public CalculadoraPrecoMedioVenda() {
+        this.operation = "sell";
+    }
+
     @Override
     public double calcular(MediaPonderadaLucroPrejuizo lucroPrejuizo, OperationInput operationInput) {
 
-        double qtdAcoesXValorVenda = getQtdAcoesXValor(operationInput);
+        double lucroAjuste = 0;
         double imposto = 0;
 
+        double qtdAcoesXValorVenda = getQtdAcoesXValor(operationInput);
         double valorPonderado = operationInput.getQuantity().intValue() * lucroPrejuizo.getMediaPonderadaAtual();
-        double lucroAjuste = 0;
 
-        //1 calcular lucro x prejuizo
         double lucro = qtdAcoesXValorVenda - valorPonderado;
-        if (lucro < 0) { //prejuizo, aumentando o prejuizo
-            lucroPrejuizo.atualizarPrejuizoPassado(
-                    lucroPrejuizo.getPrejuizoPassado()+lucro
-            );
-
-        } else { //lucro
-
-            //se o valor que teve de lucro, consigo zerar o prejuizo passado
-            lucroAjuste = lucro + lucroPrejuizo.getPrejuizoPassado();
-            //2 prejuizo anterior
-            lucroAjuste = isPrejuizoAnterior(lucroPrejuizo, lucroAjuste);
-        }
+        lucroAjuste = isLucroOuPrejuizo(lucroPrejuizo, lucro, lucroAjuste);
 
         if (qtdAcoesXValorVenda <= 20000) {
             return imposto;
         }
 
-        //3 calculo do imposto da operacao
+        lucroPrejuizo.atualizarQuantidadeAcoesAtual(
+                lucroPrejuizo.getQuantidadeAcoesAtual() - operationInput.getQuantity());
+
+
         imposto = lucroAjuste * 0.2;
         return imposto;
+    }
+
+    private static double isLucroOuPrejuizo(MediaPonderadaLucroPrejuizo lucroPrejuizo, double lucro, double lucroAjuste) {
+        if (lucro < 0) {
+            lucroPrejuizo.atualizarPrejuizoPassado(
+                    lucroPrejuizo.getPrejuizoPassado() + lucro
+            );
+        } else { //lucro
+            lucroAjuste = lucro + lucroPrejuizo.getPrejuizoPassado();
+            lucroAjuste = isPrejuizoAnterior(lucroPrejuizo, lucroAjuste);
+        }
+        return lucroAjuste;
     }
 
     private static double isPrejuizoAnterior(MediaPonderadaLucroPrejuizo lucroPrejuizo, double lucroAjuste) {
@@ -45,7 +53,7 @@ public class CalculadoraPrecoMedioVenda extends Calculadora {
                 //quando tenho lucro, mas não é suficiente para zerar o prejuizoPassado
                 //so ajusto o prejuizoPassado
                 lucroPrejuizo.atualizarPrejuizoPassado(
-                        lucroPrejuizo.getPrejuizoPassado()- lucroAjuste
+                        lucroPrejuizo.getPrejuizoPassado() - lucroAjuste
                 );
                 lucroAjuste = 0;
             }
