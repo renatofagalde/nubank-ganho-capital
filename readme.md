@@ -15,3 +15,6 @@ este método está tratando o json fornecido no cenário: Case #1 + Case #2,
 {"operation":"sell", "unit-cost":10.00, "quantity": 5000}]
 
 ```
+
+
+GanhoCapital -> não tem necessidade de inicializar os valores por que são tipos primitivos
