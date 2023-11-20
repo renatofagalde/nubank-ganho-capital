@@ -10,12 +10,6 @@ public class MediaPonderadaLucroPrejuizo {
     public MediaPonderadaLucroPrejuizo() {
     }
 
-    public MediaPonderadaLucroPrejuizo(int quantidadeAcoesAtual, double mediaPonderadaAtual, double prejuizoPassado) {
-        this.quantidadeAcoesAtual = quantidadeAcoesAtual;
-        this.mediaPonderadaAtual = mediaPonderadaAtual;
-        this.prejuizoPassado = prejuizoPassado;
-    }
-
     public int getQuantidadeAcoesAtual() {
         return quantidadeAcoesAtual;
     }
