@@ -1,4 +1,4 @@
-package br.com.nubank.ganhoCapital.model;
+package br.com.nubank.ganhoCapital.service.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

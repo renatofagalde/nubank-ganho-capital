@@ -1,6 +1,8 @@
 package br.com.nubank.ganhoCapital;
 
-import br.com.nubank.ganhoCapital.model.OperationInput;
+import br.com.nubank.ganhoCapital.service.GanhoCapital;
+import br.com.nubank.ganhoCapital.service.GanhoCapitalService;
+import br.com.nubank.ganhoCapital.service.model.OperationInput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class GanhoCapital {
+public class GanhoCapitalApp {
 
     static final ObjectMapper objectMapper = new ObjectMapper();
     public static final String LOOKING_FOR_BRACKETS = "]\\[";
@@ -17,12 +19,8 @@ public class GanhoCapital {
     public static final String HASH = "#";
     public static final String CHANGE_TO_BRACKETS_AND_HASH = "]#[";
     public static final String EMPTY = "";
-
-    public static Integer count = 0;
-
     public static int quantidadeAcoesAtual;
     public static double mediaPonderadaAtual;
-
     public static double prejuizoPassado;
 
 
@@ -34,8 +32,13 @@ public class GanhoCapital {
 
         inputStringList = inputStringList.replaceAll(LINE_BREAK, EMPTY);
 
+
+
         inputStringList = fixMultipleRootListInString(inputStringList);
         List<List<OperationInput>> allListOperations = converterToListOperation(inputStringList);
+
+        new GanhoCapitalService().processarLucroPrejuizo(allListOperations);
+
         allListOperations.stream().forEach(listOperation -> {
             listOperation.stream().forEach(operationInput -> {
                 double imposto = 0;
@@ -49,7 +52,6 @@ public class GanhoCapital {
                 }
                 System.out.println("imposto = " + imposto);
             });
-            System.out.println("----------------");
         });
 
     }
