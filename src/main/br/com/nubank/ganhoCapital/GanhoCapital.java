@@ -76,30 +76,29 @@ public class GanhoCapital {
 
         //1 calcular lucro x prejuizo
         double lucro = qtdAcoesXValorVenda - valorPonderado;
-        if (lucro < 0) {
+        if (lucro < 0) { //prejuizo, aumentando o prejuizo
             prejuizoPassado += lucro;
-        } else {
+        } else { //lucro
 
+            //se o valor que teve de lucro, consigo zerar o prejuizo passado
             lucroAjuste = lucro + prejuizoPassado;
 
             //2 prejuizo anterior
             if (prejuizoPassado < 0) {
-                if (lucroAjuste >= 0) {
-                    prejuizoPassado = 0;
-                    imposto = lucroAjuste;
+                if (lucroAjuste >= 0) { //posso fazer a conta direto, porque o meu lucro atual é maior ou igual ao prejuizo acumulado
+                    prejuizoPassado = 0; //como é maior, posso zerar o prejuizo passado
                 } else {
+                    //quando tenho lucro, mas não é suficiente para zerar o prejuizoPassado
+                    //so ajusto o prejuizoPassado
                     prejuizoPassado -= lucroAjuste;
                     lucroAjuste = 0;
                 }
             }
-
         }
-
 
         if (qtdAcoesXValorVenda <= 20000) {
             return imposto;
         }
-
 
         //3 calculo do imposto da operacao
         imposto = lucroAjuste * 0.2;
