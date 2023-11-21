@@ -7,21 +7,28 @@ import br.com.nubank.ganhoCapital.service.model.OperationInput;
 import br.com.nubank.ganhoCapital.service.model.OperationOutput;
 import br.com.nubank.ganhoCapital.service.model.OperationsOutput;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
 public class GanhoCapitalService extends GanhoCapital {
 
+
     List<Calculadora> calculadoras = List.of(new CalculadoraPrecoMedioCompra(), new CalculadoraPrecoMedioVenda());
 
     @Override
-    public void processarLucroPrejuizo(List<List<OperationInput>> allListOperations) {
+    public List<OperationsOutput> processarLucroPrejuizo(List<List<OperationInput>> allListOperations) {
+
+        List<OperationsOutput> results = new ArrayList<>();
 
         allListOperations.forEach(listOperation -> {
             OperationsOutput operations = new OperationsOutput();
             listOperation.forEach(operationInput -> iterarOperacoes.accept(operationInput, operations));
             System.out.println(operations);
+            results.add(operations);
         });
+
+        return results;
     }
 
     BiConsumer<OperationInput, OperationsOutput> iterarOperacoes = new BiConsumer<OperationInput, OperationsOutput>() {

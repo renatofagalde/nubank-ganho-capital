@@ -28,7 +28,6 @@ public class CalculadoraPrecoMedioVenda extends Calculadora {
         lucroPrejuizo.atualizarQuantidadeAcoesAtual(
                 lucroPrejuizo.getQuantidadeAcoesAtual() - operationInput.getQuantity());
 
-
         imposto = lucroAjuste * 0.2;
         return imposto;
     }

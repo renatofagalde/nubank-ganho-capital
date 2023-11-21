@@ -14,6 +14,6 @@ public class OperationOutput {
 
     @Override
     public String toString() {
-        return String.format("{\"tax\":%.2f}", this.tax);
+        return String.format("{\"tax\": %.2f}", this.tax);
     }
 }

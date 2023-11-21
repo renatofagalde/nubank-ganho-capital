@@ -18,3 +18,5 @@ este método está tratando o json fornecido no cenário: Case #1 + Case #2,
 
 
 GanhoCapital -> não tem necessidade de inicializar os valores por que são tipos primitivos
+
+caso 4 o retorno não tem formatacao
