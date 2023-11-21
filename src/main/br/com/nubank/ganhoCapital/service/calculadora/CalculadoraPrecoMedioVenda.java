@@ -21,12 +21,13 @@ public class CalculadoraPrecoMedioVenda extends Calculadora {
         double lucro = qtdAcoesXValorVenda - valorPonderado;
         lucroAjuste = isLucroOuPrejuizo(lucroPrejuizo, lucro, lucroAjuste);
 
+        lucroPrejuizo.atualizarQuantidadeAcoesAtual(
+                lucroPrejuizo.getQuantidadeAcoesAtual() - operationInput.getQuantity());
+
         if (qtdAcoesXValorVenda <= 20000) {
             return imposto;
         }
 
-        lucroPrejuizo.atualizarQuantidadeAcoesAtual(
-                lucroPrejuizo.getQuantidadeAcoesAtual() - operationInput.getQuantity());
 
         imposto = lucroAjuste * 0.2;
         return imposto;
@@ -39,24 +40,38 @@ public class CalculadoraPrecoMedioVenda extends Calculadora {
             );
         } else { //lucro
             lucroAjuste = lucro + lucroPrejuizo.getPrejuizoPassado();
-            lucroAjuste = isPrejuizoAnterior(lucroPrejuizo, lucroAjuste);
+
+            if (lucroPrejuizo.getPrejuizoPassado() < 0) {
+                if (lucroAjuste >= 0) { //posso fazer a conta direto, porque o meu lucro atual é maior ou igual ao prejuizo acumulado
+                    //prejuizoPassado = 0; //como é maior, posso zerar o prejuizo passado
+                    lucroPrejuizo.atualizarPrejuizoPassado(0);
+                } else {
+                    //quando tenho lucro, mas não é suficiente para zerar o prejuizoPassado
+                    //so ajusto o prejuizoPassado
+                    lucroPrejuizo.atualizarPrejuizoPassado(
+                            lucroPrejuizo.getPrejuizoPassado() - lucroAjuste
+                    );
+                    lucroAjuste = 0;
+                }
+            }
         }
         return lucroAjuste;
     }
 
-    private static double isPrejuizoAnterior(MediaPonderadaLucroPrejuizo lucroPrejuizo, double lucroAjuste) {
+    private static void ajustarPrejuizoLucro(MediaPonderadaLucroPrejuizo lucroPrejuizo, double lucroAjuste) {
         if (lucroPrejuizo.getPrejuizoPassado() < 0) {
             if (lucroAjuste >= 0) { //posso fazer a conta direto, porque o meu lucro atual é maior ou igual ao prejuizo acumulado
-                lucroPrejuizo.atualizarPrejuizoPassado(0);//como é maior, posso zerar o prejuizo passado
+                //prejuizoPassado = 0; //como é maior, posso zerar o prejuizo passado
+                lucroPrejuizo.atualizarPrejuizoPassado(0);
             } else {
                 //quando tenho lucro, mas não é suficiente para zerar o prejuizoPassado
                 //so ajusto o prejuizoPassado
+                //prejuizoPassado -= lucroAjuste;
                 lucroPrejuizo.atualizarPrejuizoPassado(
                         lucroPrejuizo.getPrejuizoPassado() - lucroAjuste
                 );
                 lucroAjuste = 0;
             }
         }
-        return lucroAjuste;
     }
 }

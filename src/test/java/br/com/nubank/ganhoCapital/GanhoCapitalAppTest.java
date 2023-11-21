@@ -188,8 +188,8 @@ class GanhoCapitalAppTest {
     @Test
     public void deve_processar_caso07() throws IOException {
 
-        String result = "[{\"tax\":0.00}, {\"tax\":0.00}, {\"tax\":0.00}, {\"tax\":0.00}, {\"tax\":3000.00},\n" +
-                "{\"tax\":0.00}, {\"tax\":0.00}, {\"tax\":3700.00}, {\"tax\":0.00}]";
+        String result = "[{\"tax\": 0.00},{\"tax\": 0.00},{\"tax\": 0.00},{\"tax\": 0.00},{\"tax\": 3000.00},\n" +
+                "{\"tax\": 0.00},{\"tax\": 0.00},{\"tax\": 3700.00},{\"tax\": 0.00}]";
         result = result.replaceAll("\n", "");
 
         InputStream stdin = System.in;

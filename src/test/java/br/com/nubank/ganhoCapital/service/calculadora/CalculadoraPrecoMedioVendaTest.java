@@ -32,7 +32,7 @@ class CalculadoraPrecoMedioVendaTest {
         double calculo = this.underTest.calcular(this.lucroPrejuizo, this.operationInput);
         formater.format(this.lucroPrejuizo.getMediaPonderadaAtual());
         assertEquals(0, calculo);
-        assertEquals(10,this.lucroPrejuizo.getQuantidadeAcoesAtual());
+        assertEquals(9,this.lucroPrejuizo.getQuantidadeAcoesAtual());
         assertEquals(10, this.lucroPrejuizo.getMediaPonderadaAtual(),0.01);
         assertEquals(1,this.lucroPrejuizo.getPrejuizoPassado());
     }
@@ -71,7 +71,7 @@ class CalculadoraPrecoMedioVendaTest {
         double calculo = this.underTest.calcular(this.lucroPrejuizo, this.operationInput);
         formater.format(this.lucroPrejuizo.getMediaPonderadaAtual());
         assertEquals(0, calculo);
-        assertEquals(100,this.lucroPrejuizo.getQuantidadeAcoesAtual());
+        assertEquals(90,this.lucroPrejuizo.getQuantidadeAcoesAtual());
         assertEquals(10, this.lucroPrejuizo.getMediaPonderadaAtual(),0.01);
         assertEquals(0,this.lucroPrejuizo.getPrejuizoPassado());
     }
