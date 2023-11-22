@@ -18,14 +18,22 @@
     - [Cenario7](#cenario-7)
     - [Cenario8](#cenario-8)
 
+-----
 
 ## Introdução
 
-## Linguagem e padrões de projeto
-### Java
-    o mínimo uso de frameworks
-    OperationInput -> sem setter para priorizar o lance do solid
-### 
+### Linguagem e padrões de projeto
+#### Java
+Utilizei java por ser a linguagem que tenho mais contato, porém tenho estudado e trabalhado forte mente com ``golang``
+Neste APP, foi possível aplicar o padrão de projeto strategy para efetuar cada cauculo, sendo assim, existindo uma nova modalidade apenas a classe desta nova modalidade deverá ser construída e testada, um dos príncipios do do S.O.L.I.D, neste caso: princípio-aberto-fechado. Padrões simples de re-uso através de herança foram utilizados junto com o padrão strategy, 
+para este padrão apenas a declaração da interface seria o necessário, porém um método é comum para os dois tipos de operação, este foi declarado numa classe abstrata onde cada tipo de operação extende essa classe, com isto consigo apresentar o uso do polimorfismo, herença, modificadores de acesso. 
+Outro ponto que deixo claro no código é como o Java manipula objetos com passagem de referência ou por valor.
+Separei as responsabilidades de cada classe por assunto, tempos um pacote model com representações de um input(request) e output(response), interface e suas classes concretas num pacote service.
+Tra
+
+#### Testes
+Testes unitários foram aplicados e a classe de inicialização do projeto também recebe o input para cada cenário, uma analogia ao teste de integração.
+ 
 
 ## Estrutura do projeto
 
@@ -74,7 +82,7 @@
 ```
 
 ### Instalando
-Todas as dependencias irão ser 
+Usando o maven como gerenciador de dependencias e através do plugin ``maven-assembly-plugin`` o empacotamento do aplicativo em um arquivo do tipo jar
 ```shell
 mvn clean install
 ```
