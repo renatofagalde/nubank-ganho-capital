@@ -7,6 +7,8 @@
   - [Linguagem e padrões de projeto](#linguagem-e-padrões-de-projeto)
     - [Java](#java)
   - [Rodando o app](#rodando-o-app)
+    - [Instalando](#instalando)
+    - [Rodando app]()
     - [Cenário1](#cenário-1)
 
 
@@ -19,8 +21,19 @@
 
 ## Estrutura do projeto
 
+### Instalando
+Todas as dependencias irão ser 
+```shell
+mvn clean install
+```
 ## Rodando o app
-    após ter feito o download ...
+```shell
+java -jar ./target/
+```
+    
+
+
+
 ### Cenário 1
 
 
