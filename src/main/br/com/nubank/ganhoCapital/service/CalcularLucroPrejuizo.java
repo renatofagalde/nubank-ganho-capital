@@ -1,9 +1,10 @@
 package br.com.nubank.ganhoCapital.service;
 
 import br.com.nubank.ganhoCapital.service.model.OperationInput;
+import br.com.nubank.ganhoCapital.service.model.OperationsOutput;
 
 import java.util.List;
 
 public interface CalcularLucroPrejuizo {
-    void processarLucroPrejuizo(List<List<OperationInput>> allListOperations);
+    List<OperationsOutput> processarLucroPrejuizo(List<List<OperationInput>> allListOperations);
 }
