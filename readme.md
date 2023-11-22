@@ -24,6 +24,7 @@
 ## Linguagem e padrões de projeto
 ### Java
     o mínimo uso de frameworks
+    OperationInput -> sem setter para priorizar o lance do solid
 ### 
 
 ## Estrutura do projeto
@@ -80,7 +81,7 @@ mvn clean install
 
 ### Cenario 1
 ```shell
-java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar < ./cenarios/c1.txt
 ```
 input
 ```json
@@ -95,7 +96,7 @@ esperado:
 
 ### Cenario 2
 ```shell
-java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar < ./cenarios/c2.txt
 ```
 input
 ```json
@@ -110,7 +111,7 @@ esperado:
 
 ### Cenario 1 + Cenario 2
 ```shell
-java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar < ./cenarios/c1_e_c2.txt
 ```
 input
 
@@ -131,7 +132,7 @@ esperado:
 ```
 ### Cenario 3
 ```shell
-java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar < ./cenarios/c3.txt
 ```
 input
 ```json
@@ -147,7 +148,7 @@ esperado:
 ### Cenario 4
 - Ignorado o formatação de saída deste cenario, ele consta como valor: 0 ao invés de 0.00.  Entendo que o objetivo é validar os valores e não a formatação do texto.
 ```shell
-java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar < ./cenarios/c4.txt
 ```
 - input
 ```json
@@ -166,7 +167,7 @@ esperado com formatação:
 
 ### Cenario 5
 ```shell
-java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar < ./cenarios/c5.txt
 ```
 input
 ```json
@@ -182,7 +183,7 @@ esperado:
 
 ### Cenario 6
 ```shell
-java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar < ./cenarios/c6.txt
 ```
 input
 ```json
@@ -199,7 +200,7 @@ esperado:
 
 ### Cenario 7
 ```shell
-java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar < ./cenarios/c7.txt
 ```
 - Ignorado o formatação de saída deste cenario, neste a saída esperda tem espaços entre os objetos. Entendo que o objetivo é validar os valores e não a formatação do texto.
 input
@@ -222,7 +223,7 @@ esperado:
 
 ### Cenario 8
 ```shell
-java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar ./target/ganho-capital-1.0-SNAPSHOT-jar-with-dependencies.jar < ./cenarios/c8.txt
 ```
 input
 ```json
@@ -235,27 +236,3 @@ esperado:
 ```json
 [{"tax":0.00},{"tax":80000.00},{"tax":0.00},{"tax":60000.00}]
 ```
-
-
-
-
-
-OperationInput -> sem setter para priorizar o lance do solid
-
-
-fixMultipleRootListInString existe um retorno no método, não foi usado referencia entre os métodos porque o tipo
-string é imutavel.
-este método está tratando o json fornecido no cenario: Case #1 + Case #2,
-
-```json
-[{"operation":"buy", "unit-cost":10.00, "quantity": 10000},
-{"operation":"sell", "unit-cost":20.00, "quantity": 5000}]
-[{"operation":"buy", "unit-cost":20.00, "quantity": 10000},
-{"operation":"sell", "unit-cost":10.00, "quantity": 5000}]
-
-```
-
-
-GanhoCapital -> não tem necessidade de inicializar os valores por que são tipos primitivos
-
-caso 4 o retorno não tem formatacao
